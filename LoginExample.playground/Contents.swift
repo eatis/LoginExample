@@ -1,5 +1,6 @@
 //: Playground - noun: a place where people can play
 
+import XCPlayground
 import UIKit
 
 struct LoginUser {
@@ -20,6 +21,7 @@ enum LoginProvider {
     case let .Email(user) where user.isValide():
       //login
       print("email login")
+      delegate.loginProvider(self, didSucceed: user)
       break
     case .Facebook:
       //facebook login
@@ -43,15 +45,44 @@ protocol LoginProviderDelegate {
 
 class ViewController: UIViewController, LoginProviderDelegate {
   var provider = LoginProvider.Facebook
+  let subView = UIView()
   
-  @IBAction func loginDidTouch() {
+  func showView() {
+    subView.frame = CGRect(x: 0.0, y: 0.0, width: 100.0, height: 100.0)
+    subView.backgroundColor = .redColor()
+    XCPlaygroundPage.currentPage.liveView = subView
+    view.addSubview(subView)
+    
+    view.backgroundColor = .blueColor()
+  }
+  //  override func loadView() {
+  //    subView.frame = CGRect(x: 0.0, y: 0.0, width: 100.0, height: 100.0)
+  //    subView.backgroundColor = .redColor()
+  //    XCPlaygroundPage.currentPage.liveView = subView
+  //    view.addSubview(subView)
+  //  }
+  
+  func loginDidTouch() {
+    let user = LoginUser(email: "email@test.com", password: "testpass")
+    provider = .Email(user)
     provider.login(self)
   }
   
   func loginProvider(loginProvider: LoginProvider, didSucceed user: LoginUser) {
     print(user)
+    print(user.email)
   }
   func loginProvider(lginProvider: LoginProvider, didError error: NSError) {
     print("test")
   }
 }
+
+
+let loginView = ViewController()
+loginView.loginDidTouch()
+loginView.showView()
+XCPlaygroundPage.currentPage.liveView = loginView
+
+//let subView = UIView()
+//subView.backgroundColor = .redColor()
+//XCPlaygroundPage.currentPage.liveView = subView
